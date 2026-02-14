@@ -6,9 +6,9 @@
 
 	let { data }: { data: PageData } = $props();
 
-	const pageTitle = 'happy valentines day kaylynn';
+	const pageTitle = 'Happy Valentines Day Kaylynn';
 	const pageDescription = "Valentine's Day itinerary with our plans, schedule, and countdown for the day.";
-	const pageImage = `${base}/0.webp`;
+	const pageImage = `${base}/5.webp`;
 </script>
 
 <svelte:head>

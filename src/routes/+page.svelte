@@ -1,12 +1,8 @@
 <script lang="ts">
 	import ItineraryCard from '$lib/components/ItineraryCard.svelte';
+	import type { PageData } from './$types';
 
-	const itineraryItems = [
-		{ time: '9:00 AM', title: 'Coffee + Love Notes', description: 'Cozy start to the day together.' },
-		{ time: '1:00 PM', title: 'Picnic Date', description: 'Favorite snacks, blanket, and photos.' },
-		{ time: '7:00 PM', title: 'Dinner Reservation', description: 'Dress up and enjoy your night out.' },
-		{ time: '9:30 PM', title: 'Movie + Dessert', description: 'Relax and end the day with something sweet.' }
-	];
+	let { data }: { data: PageData } = $props();
 </script>
 
 <section class="rounded-2xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-surface))] p-5 shadow-[var(--shadow-soft)]">
@@ -18,7 +14,7 @@
 </section>
 
 <section class="space-y-3" aria-label="Day itinerary">
-	{#each itineraryItems as item (item.time)}
+	{#each data.itineraryItems as item (item.time)}
 		<ItineraryCard time={item.time} title={item.title} description={item.description} />
 	{/each}
 </section>

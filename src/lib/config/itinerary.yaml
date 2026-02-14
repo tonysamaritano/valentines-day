@@ -1,0 +1,40 @@
+itinerary:
+  - time: "9:00 AM"
+    title: "Lazy Morning Coffee + Breakfast"
+    description: "Coffee together with tacos or oatmeal. No phones, just talk and wake up slowly."
+
+  - time: "10:00 AM"
+    title: "Massage + Foot Rub"
+    description: "Trade massages and relax. Set candles and music to make it special."
+
+  - time: "11:00 AM"
+    title: "Rock Climbing Gym"
+    description: "Fun partner climbs and light workout together."
+
+  - time: "1:30 PM"
+    title: "Crepes at Cafe Creme"
+    description: "Sweet crepes and coffee treat after climbing."
+
+  - time: "2:30 PM"
+    title: "Quick Storage Run"
+    description: "Knock out the errand fast so the rest of the day is stress-free."
+
+  - time: "3:15 PM"
+    title: "Home Relax Reset"
+    description: "Shower, nap, or quiet time before dinner."
+
+  - time: "6:00 PM"
+    title: "Early Dinner at Sweet Chive"
+    description: "Dress up a little and enjoy a calm dinner date."
+
+  - time: "8:00 PM"
+    title: "Wine, Cheese, and Farkle"
+    description: "Board game night with snacks and laughs."
+
+  - time: "9:30 PM"
+    title: "Another Massage"
+    description: "Slow down again and unwind together."
+
+  - time: "10:00 PM"
+    title: "Movie + Wine"
+    description: "Cozy up and end the night together."

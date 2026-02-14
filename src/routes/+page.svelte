@@ -1,9 +1,12 @@
 <script lang="ts">
+	import ActivityCountdown from '$lib/components/ActivityCountdown.svelte';
 	import ItineraryCard from '$lib/components/ItineraryCard.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 </script>
+
+<ActivityCountdown items={data.itineraryItems} />
 
 <section class="rounded-2xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-surface))] p-5 shadow-[var(--shadow-soft)]">
 	<p class="text-xs uppercase tracking-[0.2em] text-[hsl(var(--color-muted))]">Itinerary</p>

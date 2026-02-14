@@ -11,7 +11,7 @@
 <div class="min-h-screen">
 	<SiteHeader />
 
-	<main class="mx-auto w-full max-w-2xl space-y-5 px-4 pb-16 pt-6 sm:px-6">
+	<main class="mx-auto w-full max-w-2xl space-y-5 px-4 pb-16 pt-4 sm:px-6">
 		{@render children()}
 	</main>
 </div>

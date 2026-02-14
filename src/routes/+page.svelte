@@ -30,7 +30,7 @@
 	<p class="text-xs uppercase tracking-[0.2em] text-[hsl(var(--color-muted))]">Itinerary</p>
 	<h2 class="mt-2 text-2xl font-semibold leading-tight">Our Valentine's Plan</h2>
 	<p class="mt-2 text-sm text-[hsl(var(--color-muted))]">
-		Stand-in schedule components to shape the homepage layout.
+		I wish it wasn't going to be rainy, but no matter what the weather is like, I know we'll have a wonderful day together. Here's the plan for our Valentine's Day.
 	</p>
 </section>
 

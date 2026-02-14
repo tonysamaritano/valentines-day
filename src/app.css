@@ -1,0 +1,24 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+:root {
+	--color-bg: 352 60% 97%;
+	--color-surface: 0 0% 100%;
+	--color-text: 342 30% 18%;
+	--color-muted: 342 14% 40%;
+	--color-primary: 349 72% 58%;
+	--color-primary-strong: 349 70% 48%;
+	--color-border: 345 40% 87%;
+	--shadow-soft: 0 10px 30px -18px hsl(348 45% 35% / 0.45);
+}
+
+@layer base {
+	body {
+		@apply min-h-screen antialiased;
+		background:
+			radial-gradient(circle at 15% 0%, hsl(350 100% 98%), transparent 36%),
+			radial-gradient(circle at 100% 20%, hsl(342 100% 96%), transparent 42%),
+			hsl(var(--color-bg));
+		color: hsl(var(--color-text));
+	}
+}

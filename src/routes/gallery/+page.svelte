@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { base } from '$app/paths';
+
 	const imageCount = 34;
 	const imageIds = Array.from({ length: imageCount }, (_, index) => index);
 </script>
@@ -20,7 +22,7 @@
 		{#each imageIds as id (id)}
 			<figure class="gallery-item">
 				<img
-					src={`/${id}.webp`}
+					src={`${base}/${id}.webp`}
 					alt={`Valentine's Day photo ${id + 1}`}
 					loading="lazy"
 					decoding="async"

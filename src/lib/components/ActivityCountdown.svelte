@@ -2,18 +2,19 @@
 	import { onDestroy } from 'svelte';
 	import type { ItineraryItem } from '$lib/config/parseItineraryYaml';
 
-	let { items }: { items: ItineraryItem[] } = $props();
+	let { items, eventDate }: { items: ItineraryItem[]; eventDate: string } = $props();
 
-	const ctYearFormatter = new Intl.DateTimeFormat('en-US', {
-		timeZone: 'America/Chicago',
-		year: 'numeric'
-	});
+	type CountdownItem = ItineraryItem & {
+		targetMs: number;
+		timeRemaining: string;
+		isPast: boolean;
+	};
 
-type CountdownItem = ItineraryItem & {
-	targetMs: number;
-	timeRemaining: string;
-	isPast: boolean;
-};
+	type DateParts = {
+		year: number;
+		month: number;
+		day: number;
+	};
 
 	let nowMs = $state(Date.now());
 	let tickTimer: ReturnType<typeof setInterval> | null = null;
@@ -31,9 +32,16 @@ type CountdownItem = ItineraryItem & {
 		return { hour: hour24, minute };
 	};
 
-	const toEventUtcMs = (year: number, hour24: number, minute: number): number => {
-		// Feb 14 in CT is always CST (UTC-06:00), so convert directly to UTC.
-		return Date.UTC(year, 1, 14, hour24 + 6, minute, 0, 0);
+	const parseEventDate = (value: string): DateParts | null => {
+		const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+		if (!match) return null;
+
+		const year = Number(match[1]);
+		const month = Number(match[2]);
+		const day = Number(match[3]);
+
+		if (month < 1 || month > 12 || day < 1 || day > 31) return null;
+		return { year, month, day };
 	};
 
 	const formatRemaining = (deltaMs: number): string => {
@@ -49,25 +57,74 @@ type CountdownItem = ItineraryItem & {
 		return `${hours}h ${minutes}m ${seconds}s`;
 	};
 
-	const resolvedYear = $derived.by(() => {
-		const baseYear = Number(ctYearFormatter.format(new Date(nowMs)));
-
-		const hasFutureInBaseYear = items.some((item) => {
-			const parsed = parseClockTime(item.time);
-			if (!parsed) return false;
-			return toEventUtcMs(baseYear, parsed.hour, parsed.minute) > nowMs;
-		});
-
-		return hasFutureInBaseYear ? baseYear : baseYear + 1;
+	const ctFormatter = new Intl.DateTimeFormat('en-US', {
+		timeZone: 'America/Chicago',
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit',
+		hour: '2-digit',
+		minute: '2-digit',
+		hour12: false
 	});
 
-const countdownItems = $derived.by<CountdownItem[]>(() => {
+	const ctDateFormatter = new Intl.DateTimeFormat('en-US', {
+		timeZone: 'America/Chicago',
+		month: 'long',
+		day: 'numeric',
+		year: 'numeric'
+	});
+
+	const getCtParts = (timestamp: number) => {
+		const parts = ctFormatter.formatToParts(new Date(timestamp));
+		return {
+			year: Number(parts.find((part) => part.type === 'year')?.value ?? 0),
+			month: Number(parts.find((part) => part.type === 'month')?.value ?? 0),
+			day: Number(parts.find((part) => part.type === 'day')?.value ?? 0),
+			hour: Number(parts.find((part) => part.type === 'hour')?.value ?? 0),
+			minute: Number(parts.find((part) => part.type === 'minute')?.value ?? 0)
+		};
+	};
+
+	const ctLocalToUtcMs = (dateParts: DateParts, hour24: number, minute: number): number => {
+		const targetAsUtc = Date.UTC(dateParts.year, dateParts.month - 1, dateParts.day, hour24, minute, 0, 0);
+		let guess = targetAsUtc;
+
+		for (let i = 0; i < 5; i += 1) {
+			const observed = getCtParts(guess);
+			const observedAsUtc = Date.UTC(
+				observed.year,
+				observed.month - 1,
+				observed.day,
+				observed.hour,
+				observed.minute,
+				0,
+				0
+			);
+			const diff = targetAsUtc - observedAsUtc;
+			if (diff === 0) break;
+			guess += diff;
+		}
+
+		return guess;
+	};
+
+	const parsedEventDate = $derived.by(() => parseEventDate(eventDate));
+
+	const eventDateLabel = $derived.by(() => {
+		if (!parsedEventDate) return 'Invalid date';
+
+		const middayUtc = Date.UTC(parsedEventDate.year, parsedEventDate.month - 1, parsedEventDate.day, 12, 0, 0, 0);
+		return ctDateFormatter.format(new Date(middayUtc));
+	});
+
+	const countdownItems = $derived.by<CountdownItem[]>(() => {
+		if (!parsedEventDate) return [];
 		return items
 			.map((item) => {
 				const parsed = parseClockTime(item.time);
 				if (!parsed) return null;
 
-				const targetMs = toEventUtcMs(resolvedYear, parsed.hour, parsed.minute);
+				const targetMs = ctLocalToUtcMs(parsedEventDate, parsed.hour, parsed.minute);
 				const deltaMs = targetMs - nowMs;
 
 				return {
@@ -96,7 +153,7 @@ const countdownItems = $derived.by<CountdownItem[]>(() => {
 
 <section class="rounded-2xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-surface))] p-4 shadow-[var(--shadow-soft)]">
 	<p class="text-xs uppercase tracking-[0.2em] text-[hsl(var(--color-muted))]">Countdown (CT)</p>
-	<h2 class="mt-1 text-lg font-semibold">February 14, {resolvedYear}</h2>
+	<h2 class="mt-1 text-lg font-semibold">{eventDateLabel}</h2>
 
 	<div class="mt-3">
 		{#if nextUpcoming}
